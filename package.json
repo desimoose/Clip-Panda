@@ -1,0 +1,11 @@
+{
+  "name": "clip-panda",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "dev:web": "pnpm --filter @clip-panda/web dev",
+    "dev:worker": "pnpm --filter @clip-panda/worker dev",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
+  }
+}
