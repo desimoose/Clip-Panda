@@ -8,6 +8,7 @@ import {
   jsonb,
   pgEnum,
 } from "drizzle-orm/pg-core";
+import type { TranscriptSegment } from "@clip-panda/shared";
 
 export const episodeSourceType = pgEnum("episode_source_type", [
   "upload",
@@ -52,20 +53,6 @@ export const episodes = pgTable("episodes", {
   failureReason: text("failure_reason"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
-
-export interface TranscriptWord {
-  word: string;
-  startMs: number;
-  endMs: number;
-}
-
-export interface TranscriptSegment {
-  speakerLabel: string;
-  startMs: number;
-  endMs: number;
-  text: string;
-  words: TranscriptWord[];
-}
 
 export const transcripts = pgTable("transcripts", {
   id: uuid("id").primaryKey().defaultRandom(),
