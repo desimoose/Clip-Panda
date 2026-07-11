@@ -20,9 +20,25 @@ export async function POST(request: Request): Promise<Response> {
   const form = await request.formData();
   const title = form.get("title");
   const file = form.get("file");
+  const sourceUrl = form.get("sourceUrl");
 
-  if (typeof title !== "string" || !(file instanceof File)) {
-    return Response.json({ error: "title and file are required" }, { status: 400 });
+  if (typeof title !== "string") {
+    return Response.json({ error: "title is required" }, { status: 400 });
+  }
+
+  if (typeof sourceUrl === "string" && sourceUrl.length > 0) {
+    const sourceType = sourceUrl.includes("youtube.com") || sourceUrl.includes("youtu.be")
+      ? "youtube_url"
+      : "direct_url";
+    const [row] = await db
+      .insert(episodes)
+      .values({ userId: session.user.id, title, sourceType, sourceUri: sourceUrl, status: "importing" })
+      .returning();
+    return Response.json({ episodeId: row.id }, { status: 201 });
+  }
+
+  if (!(file instanceof File)) {
+    return Response.json({ error: "file or sourceUrl is required" }, { status: 400 });
   }
 
   const isAudio = file.type.startsWith("audio/");
