@@ -1,16 +1,21 @@
 import { runPollLoop } from "./poll.js";
 import { db, episodes } from "@clip-panda/db";
-import { eq, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { fetchSourceForEpisode } from "./jobs/fetchSource.js";
+import { transcribeEpisode } from "./jobs/transcribeEpisode.js";
 
 async function tick() {
   const pending = await db.query.episodes.findMany({
-    where: inArray(episodes.status, ["importing"]),
+    where: inArray(episodes.status, ["importing", "transcribing"]),
   });
 
   for (const episode of pending) {
-    if (episode.sourceType === "youtube_url" || episode.sourceType === "direct_url") {
-      await fetchSourceForEpisode(episode.id);
+    if (episode.status === "importing") {
+      if (episode.sourceType === "youtube_url" || episode.sourceType === "direct_url") {
+        await fetchSourceForEpisode(episode.id);
+      }
+    } else if (episode.status === "transcribing") {
+      await transcribeEpisode(episode.id);
     }
   }
 }
