@@ -1,0 +1,27 @@
+{
+  "name": "@clip-panda/worker",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@clip-panda/db": "workspace:*",
+    "@clip-panda/gemini": "workspace:*",
+    "@clip-panda/render": "workspace:*",
+    "@clip-panda/shared": "workspace:*",
+    "@clip-panda/storage": "workspace:*",
+    "drizzle-orm": "^0.36.0",
+    "ffmpeg-static": "^5.2.0",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
