@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { db, slides } from "@clip-panda/db";
+import { requireSlideOwner } from "@/lib/ownership";
 import { eq } from "drizzle-orm";
 
 export async function POST(
@@ -12,6 +13,11 @@ export async function POST(
   }
 
   const { slideId } = await params;
+  const slide = await requireSlideOwner(slideId, session.user.id);
+  if (!slide) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
+
   await db
     .update(slides)
     .set({ status: "pending", failureReason: null, imageUrl: null })

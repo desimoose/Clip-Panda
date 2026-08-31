@@ -6,6 +6,9 @@ const insertedSlides: any[] = [];
 vi.mock("@clip-panda/db", () => ({
   db: {
     query: {
+      episodes: {
+        findFirst: vi.fn().mockResolvedValue({ id: "11111111-1111-1111-1111-111111111111", userId: "user-1" }),
+      },
       transcripts: {
         findFirst: vi.fn().mockResolvedValue({
           segments: [
@@ -27,6 +30,7 @@ vi.mock("@clip-panda/db", () => ({
       }),
     }),
   },
+  episodes: {},
   carousels: {},
   slides: {},
   transcripts: {},
@@ -43,7 +47,7 @@ describe("POST /api/episodes/:episodeId/carousels", () => {
       captionText: ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"][i],
     }));
 
-    const request = new Request("http://localhost/api/episodes/ep-1/carousels", {
+    const request = new Request("http://localhost/api/episodes/11111111-1111-1111-1111-111111111111/carousels", {
       method: "POST",
       body: JSON.stringify({
         mode: "highlights",
@@ -52,7 +56,7 @@ describe("POST /api/episodes/:episodeId/carousels", () => {
       }),
     });
 
-    const response = await POST(request, { params: Promise.resolve({ episodeId: "ep-1" }) });
+    const response = await POST(request, { params: Promise.resolve({ episodeId: "11111111-1111-1111-1111-111111111111" }) });
     const json = await response.json();
 
     expect(response.status).toBe(201);
@@ -64,7 +68,7 @@ describe("POST /api/episodes/:episodeId/carousels", () => {
 
   it("creates a storyboard-mode carousel, sampling timestamps and looking up captions from the transcript", async () => {
     insertedSlides.length = 0;
-    const request = new Request("http://localhost/api/episodes/ep-1/carousels", {
+    const request = new Request("http://localhost/api/episodes/11111111-1111-1111-1111-111111111111/carousels", {
       method: "POST",
       body: JSON.stringify({
         mode: "storyboard",
@@ -75,7 +79,7 @@ describe("POST /api/episodes/:episodeId/carousels", () => {
       }),
     });
 
-    const response = await POST(request, { params: Promise.resolve({ episodeId: "ep-1" }) });
+    const response = await POST(request, { params: Promise.resolve({ episodeId: "11111111-1111-1111-1111-111111111111" }) });
     expect(response.status).toBe(201);
     expect(insertedSlides).toHaveLength(10);
     // sampleFrameTimestamps(0, 60000, 10) -> [0,6000,12000,18000,24000,30000,36000,...]
@@ -86,11 +90,11 @@ describe("POST /api/episodes/:episodeId/carousels", () => {
   });
 
   it("rejects storyboard mode missing clip range", async () => {
-    const request = new Request("http://localhost/api/episodes/ep-1/carousels", {
+    const request = new Request("http://localhost/api/episodes/11111111-1111-1111-1111-111111111111/carousels", {
       method: "POST",
       body: JSON.stringify({ mode: "storyboard", captionStyleId: STYLE_ID }),
     });
-    const response = await POST(request, { params: Promise.resolve({ episodeId: "ep-1" }) });
+    const response = await POST(request, { params: Promise.resolve({ episodeId: "11111111-1111-1111-1111-111111111111" }) });
     expect(response.status).toBe(400);
   });
 });

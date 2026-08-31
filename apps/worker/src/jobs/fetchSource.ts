@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { db, episodes } from "@clip-panda/db";
 import { uploadObject } from "@clip-panda/storage";
 import { eq } from "drizzle-orm";
+import { errorMessage } from "../errorMessage.js";
 
 const execFile = promisify(execFileCb);
 
@@ -44,7 +45,7 @@ export async function fetchSourceForEpisode(episodeId: string): Promise<void> {
   } catch (error) {
     await db
       .update(episodes)
-      .set({ status: "failed", failureReason: (error as Error).message })
+      .set({ status: "failed", failureReason: errorMessage(error) })
       .where(eq(episodes.id, episodeId));
   } finally {
     await unlink(outputPath).catch(() => {});

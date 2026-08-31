@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { db, transcripts } from "@clip-panda/db";
 import { suggestClipCandidates } from "@clip-panda/gemini";
+import { requireEpisodeOwner } from "@/lib/ownership";
 import { eq } from "drizzle-orm";
 
 export async function GET(
@@ -13,6 +14,11 @@ export async function GET(
   }
 
   const { episodeId } = await params;
+  const episode = await requireEpisodeOwner(episodeId, session.user.id);
+  if (!episode) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
+
   const transcript = await db.query.transcripts.findFirst({
     where: eq(transcripts.episodeId, episodeId),
   });

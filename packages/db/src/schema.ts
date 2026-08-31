@@ -94,3 +94,10 @@ export const slides = pgTable("slides", {
   status: slideStatus("status").notNull().default("pending"),
   failureReason: text("failure_reason"),
 });
+
+export type User = typeof users.$inferSelect;
+export type Episode = typeof episodes.$inferSelect;
+export type Transcript = typeof transcripts.$inferSelect;
+export type CaptionStyle = typeof captionStyles.$inferSelect;
+export type Carousel = typeof carousels.$inferSelect;
+export type Slide = typeof slides.$inferSelect;

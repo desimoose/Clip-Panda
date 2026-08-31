@@ -50,7 +50,7 @@ export function renderOverlayPng(options: RenderOverlayOptions): Buffer {
   const captionLines = lines
     .map((line, i) => {
       const y = startY + i * lineHeight;
-      return `<text x="${width / 2}" y="${y}" font-family="${style.font}" font-size="${style.size}" fill="${style.textColor}" stroke="${style.highlightColor}" stroke-width="${style.size * 0.05}" paint-order="stroke" text-anchor="middle">${escapeXml(line)}</text>`;
+      return `<text x="${width / 2}" y="${y}" font-family="${escapeXml(style.font)}" font-size="${style.size}" fill="${escapeXml(style.textColor)}" stroke="${escapeXml(style.highlightColor)}" stroke-width="${style.size * 0.05}" paint-order="stroke" text-anchor="middle">${escapeXml(line)}</text>`;
     })
     .join("\n");
 

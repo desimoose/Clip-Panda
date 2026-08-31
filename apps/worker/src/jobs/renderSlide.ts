@@ -7,6 +7,7 @@ import { getObjectBuffer, uploadObject } from "@clip-panda/storage";
 import { renderOverlayPng } from "@clip-panda/render";
 import { extractFrame } from "../frames.js";
 import { eq } from "drizzle-orm";
+import { errorMessage } from "../errorMessage.js";
 
 const SLIDE_WIDTH = 1920;
 const SLIDE_HEIGHT = 1080;
@@ -82,7 +83,7 @@ export async function renderSlide(slideId: string): Promise<void> {
   } catch (error) {
     await db
       .update(slides)
-      .set({ status: "failed", failureReason: (error as Error).message })
+      .set({ status: "failed", failureReason: errorMessage(error) })
       .where(eq(slides.id, slideId));
   }
 }

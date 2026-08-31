@@ -2,6 +2,7 @@ import { db, episodes, transcripts } from "@clip-panda/db";
 import { getObjectBuffer } from "@clip-panda/storage";
 import { transcribeMedia } from "@clip-panda/gemini";
 import { eq } from "drizzle-orm";
+import { errorMessage } from "../errorMessage.js";
 
 function mimeTypeFor(sourceUri: string): string {
   if (sourceUri.endsWith(".mp3")) return "audio/mpeg";
@@ -23,7 +24,7 @@ export async function transcribeEpisode(episodeId: string): Promise<void> {
   } catch (error) {
     await db
       .update(episodes)
-      .set({ status: "failed", failureReason: (error as Error).message })
+      .set({ status: "failed", failureReason: errorMessage(error) })
       .where(eq(episodes.id, episodeId));
   }
 }

@@ -3,7 +3,10 @@ import { z } from "zod";
 export const captionStyleSchema = z.object({
   name: z.string().min(1),
   isPreset: z.boolean(),
-  font: z.string().min(1),
+  font: z
+    .string()
+    .min(1)
+    .regex(/^[A-Za-z0-9_-]+$/, "font must be a font family name (letters, digits, - and _ only)"),
   textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
   highlightColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
   size: z.number().int().min(16).max(120),

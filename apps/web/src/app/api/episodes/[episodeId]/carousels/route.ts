@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { db, carousels, slides, transcripts } from "@clip-panda/db";
 import { sampleFrameTimestamps, findCaptionForTimestamp } from "@clip-panda/shared";
+import { requireEpisodeOwner } from "@/lib/ownership";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -33,6 +34,11 @@ export async function POST(
   }
 
   const { episodeId } = await params;
+  const episode = await requireEpisodeOwner(episodeId, session.user.id);
+  if (!episode) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
+
   const parsed = bodySchema.safeParse(await request.json());
   if (!parsed.success) {
     return Response.json({ error: parsed.error.flatten() }, { status: 400 });
